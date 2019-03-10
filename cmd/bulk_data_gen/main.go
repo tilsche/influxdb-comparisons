@@ -20,6 +20,7 @@ import (
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/dashboard"
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/devops"
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/iot"
+	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/power_lab"
 	"log"
 	"os"
 	"strings"
@@ -149,6 +150,15 @@ func main() {
 
 			SmartHomeCount:  scaleVar,
 			SmartHomeOffset: scaleVarOffset,
+		}
+		sim = cfg.ToSimulator()
+	case common.UseCaseChoices[3]:
+		cfg := &power_lab.PowerLabSimulatorConfig{
+			Start: timestampStart,
+			End:   timestampEnd,
+
+			SamplingRate: scaleVar,
+			ChannelCount:  scaleVarOffset,
 		}
 		sim = cfg.ToSimulator()
 	default:
