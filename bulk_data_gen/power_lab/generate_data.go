@@ -56,7 +56,7 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 	interval := time.Duration(int64(time.Second.Nanoseconds() / d.SamplingRate))
 	duration := d.End.Sub(d.Start)
 	maxPoints := duration.Nanoseconds() / interval.Nanoseconds()
-	log.Printf("max points: %d, channes: %d", maxPoints, d.ChannelCount)
+	log.Printf("interval: %s, duration: %s, max points: %d, channes: %d", interval, duration, maxPoints, d.ChannelCount)
 
 	sim := &PowerLabSimulator{
 		madePoints: 0,
