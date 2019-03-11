@@ -15,7 +15,7 @@ type PowerLabSimulator struct {
 
 	simulatedMeasurementIndex int
 
-	channels     [][]byte
+	channels [][]byte
 
 	interval       time.Duration
 	timestampNow   time.Time
@@ -55,7 +55,7 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 
 	interval := time.Duration(int64(time.Second.Nanoseconds() / d.SamplingRate))
 	duration := d.End.Sub(d.Start)
-	maxPoints := (duration.Nanoseconds() / interval.Nanoseconds()) * d.ChannelCount
+	maxPoints := duration.Nanoseconds() / interval.Nanoseconds()
 	log.Printf("max points: %d %d", maxPoints, d.ChannelCount)
 
 	sim := &PowerLabSimulator{
@@ -66,7 +66,7 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 		simulatedMeasurementIndex: 0,
 
 		channels:       channelNames,
-		interval:		interval,
+		interval:       interval,
 		timestampNow:   d.Start,
 		timestampStart: d.Start,
 		timestampEnd:   d.End,
@@ -83,7 +83,7 @@ func (d *PowerLabSimulator) Next(p *Point) {
 	p.SetTimestamp(&d.timestampNow)
 
 	for _, channel := range d.channels {
-		p.AppendField(channel, rand.NormFloat64() * 20 + 80)
+		p.AppendField(channel, rand.NormFloat64()*20+80)
 	}
 
 	d.madePoints++
