@@ -1,10 +1,12 @@
 package power_lab
 
 import (
+	"encoding/binary"
 	"fmt"
 	. "github.com/influxdata/influxdb-comparisons/bulk_data_gen/common"
 	"log"
 	"math/rand"
+	"os"
 	"time"
 )
 
@@ -21,6 +23,9 @@ type PowerLabSimulator struct {
 	timestampNow   time.Time
 	timestampStart time.Time
 	timestampEnd   time.Time
+
+	fakeValues       []float64
+	fakeValueIndices []int
 }
 
 func (g *PowerLabSimulator) SeenPoints() int64 {
@@ -58,6 +63,23 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 	maxPoints := duration.Nanoseconds() / interval.Nanoseconds()
 	log.Printf("interval: %s, duration: %s, max points: %d, channes: %d", interval, duration, maxPoints, d.ChannelCount)
 
+	file, err := os.Open("/home/tilsche/metricq/hta_lmg_4k.bin")
+	if err != nil {
+		log.Fatal(err)
+	}
+	fi, err := file.Stat()
+	if err != nil {
+		log.Fatal(err)
+	}
+	fakeValues := make([]float64, fi.Size()/8)
+	if err := binary.Read(file, binary.LittleEndian, &fakeValues); err != nil {
+		log.Fatal(err)
+	}
+	fakeValueIndices := make([]int, d.ChannelCount)
+	for i := 0; i < int(d.ChannelCount); i++ {
+		fakeValueIndices[i] = rand.Intn(len(fakeValues))
+	}
+
 	sim := &PowerLabSimulator{
 		madePoints: 0,
 		madeValues: 0,
@@ -65,11 +87,13 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 
 		simulatedMeasurementIndex: 0,
 
-		channels:       channelNames,
-		interval:       interval,
-		timestampNow:   d.Start,
-		timestampStart: d.Start,
-		timestampEnd:   d.End,
+		channels:         channelNames,
+		interval:         interval,
+		timestampNow:     d.Start,
+		timestampStart:   d.Start,
+		timestampEnd:     d.End,
+		fakeValues:       fakeValues,
+		fakeValueIndices: fakeValueIndices,
 	}
 	log.Printf("Actual power sampling interval %v\n", interval)
 	return sim
@@ -82,8 +106,10 @@ func (d *PowerLabSimulator) Next(p *Point) {
 	p.SetMeasurementName([]byte("power"))
 	p.SetTimestamp(&d.timestampNow)
 
-	for _, channel := range d.channels {
-		p.AppendField(channel, rand.NormFloat64()*20+80)
+	for i, channel := range d.channels {
+		p.AppendField(channel, d.fakeValues[d.fakeValueIndices[i]])
+		d.fakeValueIndices[i]++
+		d.fakeValueIndices[i] %= len(d.fakeValues)
 	}
 
 	d.madePoints++
