@@ -20,6 +20,7 @@ import (
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/dashboard"
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/devops"
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/iot"
+	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/power_hpc"
 	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/power_lab"
 	"log"
 	"os"
@@ -158,7 +159,17 @@ func main() {
 			End:   timestampEnd,
 
 			SamplingRate: scaleVar,
-			ChannelCount:  scaleVarOffset,
+			ChannelCount: scaleVarOffset,
+		}
+		sim = cfg.ToSimulator()
+	case common.UseCaseChoices[4]:
+		cfg := &power_hpc.PowerHpcSimulatorConfig{
+			Start: timestampStart,
+			End:   timestampEnd,
+
+			SamplingRate: 1000,
+			ChannelCount: 6,
+			HostCount:    scaleVar,
 		}
 		sim = cfg.ToSimulator()
 	default:

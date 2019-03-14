@@ -9,10 +9,11 @@ const (
 	UseCaseIot           = "iot"
 	UseCaseDashboard     = "dashboard"
 	UseCasePowerLab      = "power_lab"
+	UseCasePowerHpc      = "power_hpc"
 )
 
 // Use case choices:
-var UseCaseChoices = []string{UseCaseDevOps, UseCaseIot, UseCaseDashboard, UseCasePowerLab}
+var UseCaseChoices = []string{UseCaseDevOps, UseCaseIot, UseCaseDashboard, UseCasePowerLab, UseCasePowerHpc}
 
 // Simulator simulates a use case.
 type Simulator interface {

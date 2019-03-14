@@ -15,8 +15,6 @@ type PowerLabSimulator struct {
 	madeValues int64
 	maxPoints  int64
 
-	simulatedMeasurementIndex int
-
 	channels [][]byte
 
 	interval       time.Duration
@@ -67,6 +65,7 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer file.Close()
 	fi, err := file.Stat()
 	if err != nil {
 		log.Fatal(err)
@@ -85,8 +84,6 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 		madeValues: 0,
 		maxPoints:  maxPoints,
 
-		simulatedMeasurementIndex: 0,
-
 		channels:         channelNames,
 		interval:         interval,
 		timestampNow:     d.Start,
@@ -101,7 +98,9 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 
 // Next advances a Point to the next state in the generator.
 func (d *PowerLabSimulator) Next(p *Point) {
-	p.AppendTag([]byte("System"), []byte("ariel"))
+	p.AppendTag([]byte("Category"), []byte("test"))
+	p.AppendTag([]byte("System"), []byte("bench"))
+	p.AppendTag([]byte("Host"), []byte("c0"))
 
 	p.SetMeasurementName([]byte("power"))
 	p.SetTimestamp(&d.timestampNow)
