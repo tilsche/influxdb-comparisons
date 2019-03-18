@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	. "github.com/influxdata/influxdb-comparisons/bulk_data_gen/common"
+	"github.com/influxdata/influxdb-comparisons/bulk_data_gen/devops"
 	"log"
 	"math/rand"
 	"os"
@@ -46,7 +47,6 @@ type PowerLabSimulatorConfig struct {
 	Start time.Time
 	End   time.Time
 
-	SamplingRate int64
 	ChannelCount int64
 }
 
@@ -56,7 +56,7 @@ func (d *PowerLabSimulatorConfig) ToSimulator() *PowerLabSimulator {
 		channelNames[i] = []byte(fmt.Sprintf("socket_%d", i))
 	}
 
-	interval := time.Duration(int64(time.Second.Nanoseconds() / d.SamplingRate))
+	interval := devops.EpochDuration
 	duration := d.End.Sub(d.Start)
 	maxPoints := duration.Nanoseconds() / interval.Nanoseconds()
 	log.Printf("interval: %s, duration: %s, max points: %d, channes: %d", interval, duration, maxPoints, d.ChannelCount)

@@ -158,8 +158,7 @@ func main() {
 			Start: timestampStart,
 			End:   timestampEnd,
 
-			SamplingRate: scaleVar,
-			ChannelCount: scaleVarOffset,
+			ChannelCount: scaleVar,
 		}
 		sim = cfg.ToSimulator()
 	case common.UseCaseChoices[4]:
