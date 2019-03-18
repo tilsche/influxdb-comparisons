@@ -221,11 +221,11 @@ func init() {
 		log.Fatal("invalid format specifier")
 	}
 
-	hourGroupInterval := 1
+	//hourGroupInterval := 1
 
-	if queryType == DevOpsOneHostTwelveHours {
-		hourGroupInterval = 12
-	}
+	//if queryType == DevOpsOneHostTwelveHours {
+	//	hourGroupInterval = 12
+	//}
 
 	// Parse timestamps:
 	var err error
@@ -246,9 +246,9 @@ func init() {
 		log.Fatal("\"timestamp-end\" must be grater than \"timestamp-start\"")
 	}
 
-	if duration.Nanoseconds()/time.Hour.Nanoseconds() < int64(hourGroupInterval) {
-		log.Fatal("Time interval must be greater than the grouping interval")
-	}
+	//if duration.Nanoseconds()/time.Hour.Nanoseconds() < int64(hourGroupInterval) {
+	//	log.Fatal("Time interval must be greater than the grouping interval")
+	//}
 	if duration.Nanoseconds() < queryInterval.Nanoseconds() {
 		log.Fatal("Query interval must be greater than the grouping interval")
 	}

@@ -8,6 +8,7 @@ import (
 
 type InfluxPowerLab struct {
 	InfluxCommon
+	queryInterval time.Duration
 }
 
 func NewInfluxPowerLab(dbConfig bulkQuerygen.DatabaseConfig, interval bulkQuerygen.TimeInterval, duration time.Duration, scaleVar int) bulkQuerygen.QueryGenerator {
@@ -17,7 +18,8 @@ func NewInfluxPowerLab(dbConfig bulkQuerygen.DatabaseConfig, interval bulkQueryg
 	}
 
 	return &InfluxPowerLab{
-		InfluxCommon: *newInfluxCommon(InfluxQL, dbConfig[bulkQuerygen.DatabaseName], interval, scaleVar),
+		InfluxCommon:  *newInfluxCommon(InfluxQL, dbConfig[bulkQuerygen.DatabaseName], interval, scaleVar),
+		queryInterval: duration,
 	}
 }
 
@@ -27,9 +29,9 @@ func (d *InfluxPowerLab) Dispatch(i int) bulkQuerygen.Query {
 	return q
 }
 
-func (d *InfluxPowerLab) MinMaxMeanPower(qi bulkQuerygen.Query, timeRange time.Duration) {
-	interval := d.AllInterval.RandWindow(timeRange)
-	groupInterval := timeRange / 1000
+func (d *InfluxPowerLab) MinMaxMeanPower(qi bulkQuerygen.Query) {
+	interval := d.AllInterval.RandWindow(d.queryInterval)
+	groupInterval := d.queryInterval / 1000
 
 	if d.language != InfluxQL {
 		panic("Wrong language")
@@ -40,7 +42,7 @@ func (d *InfluxPowerLab) MinMaxMeanPower(qi bulkQuerygen.Query, timeRange time.D
 WHERE (Category = 'test' and System = 'bench' and Host = 'c0')
 AND time >= '%s' time < '%s'
 GROUP by time(%s)`, interval.StartString(), interval.EndString(), groupInterval)
-	humanLabel := fmt.Sprintf("InfluxDB min/max/mean, rand %s by %s", d, timeRange, groupInterval)
+	humanLabel := fmt.Sprintf("InfluxDB min/max/mean, rand %s by %s", d, d.queryInterval, groupInterval)
 
 	q := qi.(*bulkQuerygen.HTTPQuery)
 	d.getHttpQuery(humanLabel, interval.StartString(), query, q)
