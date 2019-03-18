@@ -47,6 +47,7 @@ const (
 	DashboardRedisMemoryUtilization = "redis-memory-utilization"
 	DashboardSystemLoad             = "system-load"
 	DashboardThroughput             = "throughput"
+	PowerLabMinMaxMean              = "min-max-mean-power"
 )
 
 // query generator choices {use-case, query-type, format}
@@ -123,6 +124,11 @@ var useCaseMatrix = map[string]map[string]map[string]bulkQueryGen.QueryGenerator
 		DashboardRedisMemoryUtilization: {"influx-http": influxdb.NewInfluxQLDashboardRedisMemoryUtilization},
 		DashboardSystemLoad:             {"influx-http": influxdb.NewInfluxQLDashboardSystemLoad},
 		DashboardThroughput:             {"influx-http": influxdb.NewInfluxQLDashboardThroughput},
+	},
+	common.UseCasePowerLab: {
+		PowerLabMinMaxMean: {
+			"influx-http": influxdb.NewInfluxPowerLab,
+		},
 	},
 }
 
