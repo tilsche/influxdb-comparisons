@@ -38,9 +38,10 @@ func (d *InfluxPowerLab) MinMaxMeanPower(qi bulkQuerygen.Query) {
 	}
 
 	query := fmt.Sprintf(
-		`SELECT max(power), min(power), mean(power)
+		`SELECT max(*), min(*), mean(*)
+FROM power
 WHERE (Category = 'test' and System = 'bench' and Host = 'c0')
-AND time >= '%s' time < '%s'
+and time >= '%s' and time < '%s'
 GROUP by time(%s)`, interval.StartString(), interval.EndString(), groupInterval)
 	humanLabel := fmt.Sprintf("InfluxDB min/max/mean, rand %s by %s", d, d.queryInterval, groupInterval)
 
