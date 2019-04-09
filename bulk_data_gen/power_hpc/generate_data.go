@@ -52,8 +52,8 @@ func (d *PowerHpcSimulatorConfig) ToSimulator() *PowerHpcSimulator {
 
 	interval := time.Duration(int64(time.Second.Nanoseconds() / d.SamplingRate))
 	duration := d.End.Sub(d.Start)
-	maxPoints := (duration.Nanoseconds() / interval.Nanoseconds()) * d.ChannelCount
-	log.Printf("max points: %d %d", maxPoints, d.ChannelCount)
+	maxPoints := (duration.Nanoseconds() / interval.Nanoseconds()) * d.ChannelCount * d.HostCount
+	log.Printf("max points: %d, channels: %d, hosts: %d", maxPoints, d.ChannelCount, d.HostCount)
 
 	file, err := os.Open("/home/tilsche/metricq/hta_lmg_4k.bin")
 	if err != nil {
